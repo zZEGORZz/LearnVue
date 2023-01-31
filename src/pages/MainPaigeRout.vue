@@ -41,24 +41,24 @@ export default {
     data() {
         return {
             inputValue: '',
-            listTasks: ['Todo 1', 'Todo 2', 'Todo 3'],
-        }
+            listTasks: ['111', '222', '333'],
+        };
     },
     methods: {
         addTask() {
             if (this.inputValue !== '') {
-                this.listTasks.push(this.inputValue)
-                this.inputValue = ''
+                this.listTasks.push(this.inputValue);
+                this.inputValue = '';
             }
         },
         inpValueNow(event) {
-            this.inputValue = event.target.value
+            this.inputValue = event.target.value;
         },
         deleteTask(indexElem) {
-            this.listTasks.splice(indexElem, 1)
+            this.listTasks.splice(indexElem, 1);
         },
     },
-}
+};
 </script>
 
 <style>

@@ -1,21 +1,43 @@
 <template>
     <h1>Pokemons</h1>
-    {{ info }}
+    <input
+        type="text"
+        placeholder="Введите имя покемона"
+        @keypress.enter="getPoke"
+        v-model="inputValue"
+    />
+    <input type="button" value="Найти" @click="getPoke" />
+    <ul>
+        <li v-if="info">
+            <img
+                :src="info.data.sprites.front_default"
+                alt="Картинка не загрузилась ыыы"
+            />
+        </li>
+        <li>pokemon name: {{ inputValue }}</li>
+        <li v-if="info">pokemon species: {{ info.data.species.name }}</li>
+    </ul>
 </template>
 
 <script>
-import axios from 'axios'
+import axios from 'axios';
 
 export default {
     data() {
         return {
-            info: null,
-        }
+            info: 0,
+            inputValue: '',
+        };
     },
-    mounted() {
-        axios
-            .get('https://pokeapi.co/api/v2/pokemon/ditto')
-            .then((response) => (this.info = response))
+    methods: {
+        getPoke() {
+            console.log(`this is poke ` + this.inputValue);
+            axios
+                .get(`https://pokeapi.co/api/v2/pokemon/${this.inputValue}`)
+                .then((response) => {
+                    this.info = response;
+                });
+        },
     },
-}
+};
 </script>
