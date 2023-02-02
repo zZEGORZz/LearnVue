@@ -10,6 +10,7 @@ const store = createStore({
     state() {
         return {
             infoPokemons: '',
+            getPokemon: '',
             listTasksVuex: [],
         };
     },
