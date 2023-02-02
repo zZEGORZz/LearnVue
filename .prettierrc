@@ -2,7 +2,6 @@
     "max-len": 100,
     "printWidth": 80,
     "tabWidth": 4,
-    "jsxBracketSameLine": true,
     "arrowParens": "always",
     "bracketSpacing": true,
     "trailingComma": "es5",

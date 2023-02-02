@@ -1,39 +1,46 @@
 <template>
-    <div class="header">
-        <div class="container">
-            <div class="logo">Задачи</div>
-            <label for="inputTask">
+    <div>
+        <div class="header">
+            <div class="container">
+                <div class="logo">Задачи</div>
+                <label for="inputTask">
+                    <input
+                        id="inputTask"
+                        type="text"
+                        placeholder="Введите задачу"
+                        :value="inputValue"
+                        @input="inpValueNow"
+                        @keypress.enter="addTask"
+                /></label>
                 <input
-                    id="inputTask"
-                    type="text"
-                    placeholder="Введите задачу"
-                    :value="inputValue"
-                    @input="inpValueNow"
-                    @keypress.enter="addTask"
-            /></label>
-            <input
-                id="buttonAddTask"
-                type="button"
-                value="Добавить"
-                @click="addTask"
-            />
-        </div>
-    </div>
-    <ul>
-        <li v-for="(elem, indexElem) in listTasks" :key="indexElem.id">
-            {{ elem }}
-            <div>
-                <button class="btn btn2" @click="deleteTask(indexElem)">
-                    Удалить
-                </button>
+                    id="buttonAddTask"
+                    type="button"
+                    value="Добавить"
+                    @click="addTask"
+                />
             </div>
-        </li>
-    </ul>
-    <div v-if="listTasks.length" class="sumTasks">
-        <hr />
-        <div>Всего заметок: {{ listTasks.length }}</div>
+        </div>
+        <ul>
+            <li
+                v-for="(elem, indexElem) in this.$store.state.listTasksVuex"
+                :key="indexElem.id"
+            >
+                {{ elem }}
+                <div>
+                    <button class="btn btn2" @click="deleteTask(indexElem)">
+                        Удалить
+                    </button>
+                </div>
+            </li>
+        </ul>
+        <div v-if="this.$store.state.listTasksVuex.length" class="sumTasks">
+            <hr v-if="this.$store.state.listTasksVuex.length" />
+            <div>
+                Всего заметок: {{ this.$store.state.listTasksVuex.length }}
+            </div>
+        </div>
+        <router-view></router-view>
     </div>
-    <router-view></router-view>
 </template>
 
 <script>
@@ -41,13 +48,12 @@ export default {
     data() {
         return {
             inputValue: '',
-            listTasks: ['111', '222', '333'],
         };
     },
     methods: {
         addTask() {
             if (this.inputValue !== '') {
-                this.listTasks.push(this.inputValue);
+                this.$store.state.listTasksVuex.push(this.inputValue);
                 this.inputValue = '';
             }
         },
@@ -55,7 +61,7 @@ export default {
             this.inputValue = event.target.value;
         },
         deleteTask(indexElem) {
-            this.listTasks.splice(indexElem, 1);
+            this.$store.state.listTasksVuex.splice(indexElem, 1);
         },
     },
 };
