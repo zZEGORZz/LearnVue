@@ -2,12 +2,12 @@
     <div>
         <div class="header">
             <div class="container">
-                <div class="logo">Задачи</div>
+                <div class="logo">ToDo List</div>
                 <label for="inputTask">
                     <input
                         id="inputTask"
                         type="text"
-                        placeholder="Введите задачу"
+                        placeholder="No one will do it but You"
                         :value="inputValue"
                         @input="inpValueNow"
                         @keypress.enter="addTask"
@@ -15,28 +15,30 @@
                 <input
                     id="buttonAddTask"
                     type="button"
-                    value="Добавить"
+                    value="Enter"
                     @click="addTask"
                 />
             </div>
         </div>
-        <ul>
+        <ul class="ulTo">
             <li
                 v-for="(elem, indexElem) in this.$store.state.listTasksVuex"
                 :key="indexElem.id"
             >
                 {{ elem }}
                 <div>
-                    <button class="btn btn2" @click="deleteTask(indexElem)">
-                        Удалить
+                    <button class="btnDelete" @click="deleteTask(indexElem)">
+                        Delete
                     </button>
                 </div>
             </li>
         </ul>
         <div v-if="this.$store.state.listTasksVuex.length" class="sumTasks">
-            <hr v-if="this.$store.state.listTasksVuex.length" />
             <div>
-                Всего заметок: {{ this.$store.state.listTasksVuex.length }}
+                <hr v-if="this.$store.state.listTasksVuex.length" />
+            </div>
+            <div>
+                Counter notes: {{ this.$store.state.listTasksVuex.length }}
             </div>
         </div>
         <router-view></router-view>
@@ -75,17 +77,21 @@ body {
     background-color: rgb(255 241 241);
 }
 
-li {
+.ulTo {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 0;
+}
+
+.ulTo li {
     list-style-type: none;
     word-wrap: break-word;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    margin-left: 70px;
-    margin-right: 102px;
+    margin-top: 14px;
     font-size: 30px;
-    background-color: #aaffff;
-    padding-bottom: 1px;
+    background-color: rgb(233 182 216);
     border-radius: 10px;
+    width: 700px;
 }
 
 .header {
@@ -94,42 +100,56 @@ li {
     text-align: center;
 }
 
+.container {
+    height: 46px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
 .header .container .logo {
     font-family: 'Rubik Mono One', sans-serif;
-    width: 100px;
-    line-height: 42px;
+    width: 135px;
     color: #fff700;
-    font-size: 35px;
+    font-size: 30px;
     cursor: pointer;
-    text-shadow: 2px 2px 3px rgba(251, 255, 0, 0.445),
-        -2px -2px 3px rgba(255, 145, 0, 0.445);
+    text-shadow: 2px 2px 3px rgb(251 255 0 / 45%),
+        -2px -2px 3px rgb(255 145 0 / 45%);
     -webkit-text-stroke: 1px #fff700;
     -webkit-text-fill-color: transparent;
-    letter-spacing: 5px;
-    display: inline;
+    letter-spacing: 1px;
+    display: flex;
+    flex-wrap: wrap;
     margin-right: 5%;
+    margin-top: -6px;
 }
 
 #inputTask {
+    color: rgb(153, 0, 255);
     background-color: rgb(238, 178, 213);
     width: 350px;
     height: 28px;
     border-radius: 7px;
     font-size: 17px;
-    margin-bottom: 7px;
     margin-right: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    border: black solid 2px;
 }
 
 #buttonAddTask {
-    background-color: rgb(157, 255, 0);
+    color: black;
+    background-color: rgb(238, 178, 213);
     border-radius: 7px;
-    height: 30px;
-    box-shadow: inset 0 0 0 0px #53ea93;
+    height: 28px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 #buttonAddTask:hover {
-    background-color: rgb(157, 255, 0);
-    box-shadow: inset 0 0 0 2px #00ccff;
+    color: #ffffff;
+    background-color: rgb(94, 255, 0);
 }
 
 #inputTaskText {
@@ -147,11 +167,9 @@ li {
     word-break: break-all;
 }
 
-.btn {
+.btnDelete {
     width: 70px;
     height: 30px;
-    position: relative;
-    display: block;
     color: rgb(0, 0, 0);
     font-size: 12px;
     font-family: 'montserrat';
@@ -161,19 +179,31 @@ li {
     padding: 0px 0px;
     text-transform: uppercase;
     overflow: hidden;
-    transition: 1s all ease;
     margin-left: 87%;
     border-radius: 7px;
     background-color: blanchedalmond;
 }
 
-.btn:hover {
+.btnDelete:hover {
+    color: antiquewhite;
     background-color: #ff0000;
-    transition-duration: 0.2s;
 }
 
 .sumTasks {
-    margin-left: 102px;
-    margin-right: 102px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-items: center;
+}
+
+hr {
+    margin: 0;
+    color: inherit;
+    border: 0;
+    border-top: 1px solid;
+    opacity: 0.25;
+    width: 650px;
+    display: flex;
+    justify-content: center;
 }
 </style>

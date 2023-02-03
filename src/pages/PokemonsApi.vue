@@ -1,56 +1,75 @@
 <template>
     <div>
         <h1>Pokemons</h1>
-        <input
-            v-if="!this.$store.state.infoPokemons"
-            id="butFind"
-            type="button"
-            value="FIND POKEMONS!"
-            @click="getPokesList"
-        />
         <div v-on:="getPokesList"></div>
-        <div class="block-left">
-            <ul class="ulPoke" v-if="this.$store.state.infoPokemons">
-                <!-- prettier-ignore -->
-                <li v-for="(elem, indexElem) in this.$store.state.infoPokemons.data.results" :key="indexElem.id">
-                <button v-on:click="getPoke(elem.url)">{{ elem.name }}</button>
-            </li>
+
+        <input
+            class="inpPoke"
+            type="text"
+            placeholder="Pokemon's Google"
+            v-model="inputValue"
+            @keypress.enter="
+                getPoke(`https://pokeapi.co/api/v2/pokemon/${inputValue}`)
+            "
+        />
+        <input
+            class="butPoke"
+            type="button"
+            value="search"
+            @click="getPoke(`https://pokeapi.co/api/v2/pokemon/${inputValue}`)"
+        />
+
+        <div class="sticky">
+            <div class="imgPoke" v-if="this.$store.state.getPokemon">
+                <img
+                    :src="
+                        this.$store.state.getPokemon.data.sprites.front_default
+                    "
+                    alt="Картинка не загрузилась"
+                />
+                <img
+                    v-if="
+                        this.$store.state.getPokemon.data.sprites.back_default
+                    "
+                    :src="
+                        this.$store.state.getPokemon.data.sprites.back_default
+                    "
+                    alt="Картинка не загрузилась"
+                />
+            </div>
+
+            <ul class="ulPokeStats">
+                <li v-if="this.$store.state.getPokemon">
+                    name:
+                    {{ this.$store.state.getPokemon.data.forms[0].name }}
+                </li>
+                <li v-if="this.$store.state.getPokemon">
+                    weight: {{ this.$store.state.getPokemon.data.weight }}
+                </li>
+                <li v-if="this.$store.state.getPokemon">
+                    ability:
+                    <!-- prettier-ignore -->
+                    {{ this.$store.state.getPokemon.data.abilities[0].ability.name }}
+                </li>
             </ul>
         </div>
-        <div class="block-right">
-            <div class="sticky">
-                <div class="imgPoke" v-if="this.$store.state.getPokemon">
-                    <img
-                        :src="
-                            this.$store.state.getPokemon.data.sprites
-                                .front_default
-                        "
-                        alt="Картинка не загрузилась"
-                    />
-                    <img
-                        :src="
-                            this.$store.state.getPokemon.data.sprites
-                                .back_default
-                        "
-                        alt="Картинка не загрузилась"
-                    />
-                </div>
 
-                <ul class="ulPoke">
-                    <li v-if="this.$store.state.getPokemon">
-                        name:
-                        {{ this.$store.state.getPokemon.data.forms[0].name }}
-                    </li>
-                    <li v-if="this.$store.state.getPokemon">
-                        weight: {{ this.$store.state.getPokemon.data.weight }}
-                    </li>
-                    <li v-if="this.$store.state.getPokemon">
-                        ability:
-                        <!-- prettier-ignore -->
-                        {{ this.$store.state.getPokemon.data.abilities[0].ability.name }}
-                    </li>
-                </ul>
-            </div>
+        <ul class="ulPoke" v-if="this.$store.state.infoPokemons">
+            <!-- prettier-ignore -->
+            <li v-for="(elem, indexElem) in paginationPokes" :key="indexElem.id">
+                <button class="btnChoosePoke" v-on:click="getPoke(elem.url)">{{ elem.name }}</button>
+            </li>
+        </ul>
+    </div>
+    <div></div>
+    <div class="tablePagination">
+        <div
+            class="page"
+            v-for="page in pages"
+            :key="page"
+            @click="pageClick(page)"
+        >
+            {{ page }}
         </div>
     </div>
 </template>
@@ -62,9 +81,22 @@ export default {
     data() {
         return {
             inputValue: '',
+            pageNum: 1,
         };
     },
     methods: {
+        getPoke(pokeName) {
+            console.log(pokeName);
+            axios.get(pokeName).then((response) => {
+                this.$store.state.getPokemon = response;
+            });
+            this.inputValue = '';
+        },
+        pageClick(page) {
+            this.pageNum = page;
+        },
+    },
+    computed: {
         getPokesList() {
             axios
                 .get(`https://pokeapi.co/api/v2/pokemon/?limit=721`)
@@ -72,20 +104,60 @@ export default {
                     this.$store.state.infoPokemons = response;
                 });
         },
-        getPoke(pokeName) {
-            axios.get(pokeName).then((response) => {
-                this.$store.state.getPokemon = response;
-            });
+        pages() {
+            return Math.ceil(
+                this.$store.state.infoPokemons.data.results.length / 8
+            );
         },
+        paginationPokes() {
+            let from = (this.pageNum - 1) * 8,
+                to = from + 8;
+            return this.$store.state.infoPokemons.data.results.slice(from, to);
+        },
+    },
+    created: function () {
+        this.getPoke('https://pokeapi.co/api/v2/pokemon/25/');
     },
 };
 </script>
 
 <style>
+.btnChoosePoke {
+    font-size: 20px;
+    margin: 0px;
+    border-radius: 10px;
+}
+
+.btnChoosePoke:hover {
+    background: #363636;
+    color: #ffffff;
+}
+
+.ulPoke {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    list-style-type: none;
+}
+
 .ulPoke li {
     padding: 0%;
     background-color: rgb(255 241 241);
     font-size: 25px;
+    margin: 4px;
+}
+
+.ulPokeStats {
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+}
+
+.ulPokeStats li {
+    padding: 0%;
+    background-color: rgb(255 241 241);
+    font-size: 25px;
+    margin: 4px;
 }
 
 .imgPoke {
@@ -100,29 +172,37 @@ export default {
     height: 101px;
 }
 
-#butFind {
-    font-size: 25px;
-    border: 1 rem solid;
-    margin-top: 200px;
-    border-color: black;
-    font-weight: 700;
+.tablePagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-left: 10%;
+    margin-right: 10%;
 }
 
-.block-left {
-    width: 50%;
-    height: 100%;
-    overflow: auto;
-    float: left;
+.page {
+    border: solid 1px #363636;
+    border-radius: 5px;
+    width: 25px;
+    margin: 2px;
 }
 
-.sticky {
-    position: fixed;
-    top: 25%;
+.page:hover {
+    background-color: #363636;
+    cursor: pointer;
+    color: #ffffff;
 }
 
-.block-right {
-    width: 50%;
-    height: 100%;
-    overflow: auto;
+.inpPoke {
+    border: black solid 2px;
+    height: 30px;
+    padding: 3px;
+    margin: 0%;
+}
+
+.butPoke {
+    margin-left: -2px;
+    height: 30px;
+    border: black solid 2px;
 }
 </style>
